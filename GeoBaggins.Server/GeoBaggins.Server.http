@@ -1,0 +1,6 @@
+@GeoBaggins.Server_HostAddress = http://localhost:5230
+
+GET {{GeoBaggins.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

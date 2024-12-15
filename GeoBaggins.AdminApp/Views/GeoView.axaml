@@ -1,0 +1,77 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:GeoBaggins.AdminApp.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="GeoBaggins.AdminApp.Views.GeoView">
+    <Design.DataContext>
+        <vm:GeoViewModel />
+    </Design.DataContext>
+    
+    <Grid Margin="12,36,12,12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="300" Width="Auto"/>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <Border Grid.Column="0">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto"
+                          u:ScrollTo.Direction="Top">
+                <StackPanel Orientation="Vertical"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0">
+                    <u:Form LabelPosition="Left"
+                            LabelWidth="*">
+                        <TextBox Width="300" u:FormItem.Label="Address" u:FormItem.IsRequired="True" />
+                        <TextBox Width="300" u:FormItem.Label="Latitude" u:FormItem.IsRequired="True" />
+                        <TextBox Width="300" u:FormItem.Label="Longitude" u:FormItem.IsRequired="True" />
+                        <TextBox Width="300" u:FormItem.Label="Radius" u:FormItem.IsRequired="True" />
+                        <TextBox Width="300" u:FormItem.Label="Message" Classes="TextArea" />
+                        <Grid u:FormItem.NoLabel="True"
+                              ColumnDefinitions="*, *">
+                            <Button Classes="Success"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5, 0"
+                                    Theme="{DynamicResource SolidButton}">Save</Button>
+                            <Button Classes="Success"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5, 0"
+                                    Theme="{DynamicResource SolidButton}">Create</Button>
+                        </Grid>
+                        <Button Classes="Secondary"
+                                u:FormItem.NoLabel="True"
+                                Theme="{DynamicResource OutlineButton}"
+                                Content="Clear Selection"
+                                HorizontalAlignment="Stretch"/>
+                    </u:Form>
+                    
+                    <u:Divider Content="Areas"
+                               Margin="0, 5"/>
+                    <ListBox>
+                        <ListBoxItem>111111</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                        <ListBoxItem>2222222222</ListBoxItem>
+                    </ListBox>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+        
+        <Border Grid.Column="1"
+                Background="Blue">
+            
+        </Border>
+        
+    </Grid>
+</UserControl>
