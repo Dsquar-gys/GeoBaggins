@@ -35,11 +35,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Activities\" />
-      <Folder Include="Models\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <UpToDateCheckInput Remove="Views\MainView.axaml" />
     </ItemGroup>
 </Project>

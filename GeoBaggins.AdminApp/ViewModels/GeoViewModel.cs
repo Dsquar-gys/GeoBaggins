@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
-using System.Threading.Tasks;
 using Avalonia.Controls.Notifications;
 using DynamicData;
 using GeoBaggins.AdminApp.Data;

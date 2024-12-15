@@ -2,6 +2,4 @@
 
 namespace GeoBaggins.AdminApp.ViewModels;
 
-public class ViewModelBase : ReactiveObject
-{
-}
+public class ViewModelBase : ReactiveObject;

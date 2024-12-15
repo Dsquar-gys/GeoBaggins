@@ -15,9 +15,7 @@ using Avalonia.Android;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 using GeoBaggins.Android.Services;
-using GeoBaggins.Models;
 using GeoBaggins.Views;
-using Refit;
 
 namespace GeoBaggins.Android;
 
@@ -36,7 +34,6 @@ public class MainActivity : AvaloniaMainActivity<App>
             .UseReactiveUI();
     }
     
-    // IGeoBagginsApi _geoBagginsApi;
     LocationManager _locationManager;
     NotificationManagerCompat _notificationManager;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using GeoBaggins.AdminApp.Data;
 
 namespace GeoBaggins.AdminApp.ViewModels;
 
