@@ -28,6 +28,7 @@ app.MapPost("/api/location", async (HttpContext context) =>
     {
         try
         {
+            var dbContext = context.RequestServices.GetRequiredService<ApplicationDbContext>();
             // Чтение тела запроса
             var locationData = await context.Request.ReadFromJsonAsync<LocationDto>();
             
@@ -35,14 +36,48 @@ app.MapPost("/api/location", async (HttpContext context) =>
             {
                 return Results.BadRequest("Invalid data");
             }
-
-            // Логика обработки данных
-            Console.WriteLine($"Received location: Lat={locationData.Latitude}, Lng={locationData.Longitude}, Timestamp={locationData.TimeStamp}");
-
-            var responseMessage = @"{Сообщение от кофейни}";
             
-            // Здесь можно сохранить данные в базу данных или выполнить другую обработку
-            return Results.Ok(responseMessage);
+            var zones = await dbContext.GeoZones.ToListAsync();
+            var lastZone = zones.FirstOrDefault(x =>
+                Extends.IsWithinGeoZone(locationData.Latitude, locationData.Longitude, x));
+            
+            if (lastZone == null)
+            {
+                return Results.StatusCode(StatusCodes.Status100Continue);
+            }
+            
+            var deviceState = await dbContext.DeviceStates
+                .FirstOrDefaultAsync(ds => ds.DeviceId == locationData.DeviceId);
+            
+            if (deviceState == null)
+            {
+                deviceState = new DeviceState
+                {
+                    DeviceId = locationData.DeviceId,
+                    GeoZoneId = null,
+                    LastNotificationTime = DateTime.UtcNow
+                };
+
+                dbContext.DeviceStates.Add(deviceState);
+                dbContext.SaveChanges();
+                
+                return Results.StatusCode(StatusCodes.Status100Continue);
+            }
+
+            // Если устройство уже существует, проверяем логику входа в новую геозону или тайм-аут
+            var isNewZone = deviceState.GeoZoneId != lastZone.Id;
+            var isTimeout = deviceState.LastNotificationTime == null || 
+                            (DateTime.UtcNow - deviceState.LastNotificationTime.Value).TotalHours >= 3;
+
+            if (!isNewZone && !isTimeout) return Results.StatusCode(StatusCodes.Status100Continue);
+            
+            // Обновляем состояние устройства и отправляем уведомление
+            deviceState.GeoZoneId = lastZone.Id;
+            deviceState.LastNotificationTime = DateTime.UtcNow;
+            
+            dbContext.SaveChanges();
+
+            return Results.Ok(lastZone.Message);
         }
         catch (Exception ex)
         {

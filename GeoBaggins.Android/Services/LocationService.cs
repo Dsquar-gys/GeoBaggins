@@ -6,6 +6,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Locations;
 using Android.OS;
+using Android.Provider;
 using AndroidX.Core.App;
 using GeoBaggins.Models;
 using Refit;
@@ -16,6 +17,12 @@ namespace GeoBaggins.Android.Services;
     public class LocationService : Service
     {
         private const int NotificationId = 1001;
+        
+        // Для проверки изменения области
+        // private int _counter;
+        // private LocationDto _first = new LocationDto{DeviceId = "111", Latitude = 30, Longitude = 60, TimeStamp = DateTime.Now};
+        // private LocationDto _second = new LocationDto{DeviceId = "111", Latitude = 60, Longitude = 30, TimeStamp = DateTime.Now};
+        
         private Timer _timer;
         private LocationManager _locationManager;
         private IGeoBagginsApi _geoBagginsApi;
@@ -24,11 +31,7 @@ namespace GeoBaggins.Android.Services;
         {
             base.OnCreate();
             _locationManager = (LocationManager)GetSystemService(LocationService);
-            var notification = new NotificationCompat.Builder(this, "geo_channel")
-                .SetContentTitle("Location Service")
-                .SetContentText("Service is running in background")
-                .SetSmallIcon(Resource.Drawable.Icon)
-                .Build();
+            var notification = CreateNotification("GeoBaggins.Android");
             
             try
             {
@@ -37,9 +40,7 @@ namespace GeoBaggins.Android.Services;
             }
             catch (Exception e)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e);
-                Console.ResetColor();
+                Notify("Ошибка подключения к серверу");
             }
 
             StartForeground(NotificationId, notification);
@@ -52,7 +53,8 @@ namespace GeoBaggins.Android.Services;
 
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            _timer = new Timer(SendLocationToServer, null, 0, 5000);
+            Notify("Сервис запущен");
+            _timer = new Timer(SendLocationToServer, null, 0, 10000);
             return StartCommandResult.Sticky;
         }
 
@@ -99,6 +101,9 @@ namespace GeoBaggins.Android.Services;
                     return;
                 }
 
+                var deviceId =
+                    Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
+
                 var lat = location.Latitude;
                 var lng = location.Longitude;
 
@@ -106,25 +111,30 @@ namespace GeoBaggins.Android.Services;
                 {
                     Latitude = lat,
                     Longitude = lng,
-                    TimeStamp = DateTime.UtcNow
+                    TimeStamp = DateTime.UtcNow,
+                    DeviceId = deviceId!
                 };
             
                 try
                 {
                     var response = await _geoBagginsApi.CheckLocation(locationData);
+                    // string response;
+                    // if (_counter++ % 2 == 0)
+                    // {
+                    //     response = await _geoBagginsApi.CheckLocation(_first);
+                    // }
+                    // else
+                    // {
+                    //     response = await _geoBagginsApi.CheckLocation(_second);
+                    // }
                     Notify(response);
                 }
                 catch (ApiException apiEx)
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"HTTP Error: {apiEx.StatusCode} - {apiEx.Content}");
                     Notify("Server Error");
                 }
                 catch (Exception e)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Refit error: " + e);
-                    Console.ResetColor();
                     Notify("Error");
                 }
             });
@@ -140,13 +150,5 @@ namespace GeoBaggins.Android.Services;
                 .SetAutoCancel(false);
 
             return builder.Build();
-        }
-
-        public override bool StopService(Intent? name)
-        {
-            _timer?.Dispose();
-            StopForeground(true);
-            StopSelf();
-            return true;
         }
     }

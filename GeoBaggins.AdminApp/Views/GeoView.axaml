@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:GeoBaggins.AdminApp.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:avalonia="clr-namespace:Mapsui.UI.Avalonia;assembly=Mapsui.UI.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="GeoBaggins.AdminApp.Views.GeoView"
              x:DataType="vm:GeoViewModel">
@@ -76,7 +77,7 @@
         
         <Border Grid.Column="1"
                 Background="Blue">
-            
+            <avalonia:MapControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Border>
         
     </Grid>

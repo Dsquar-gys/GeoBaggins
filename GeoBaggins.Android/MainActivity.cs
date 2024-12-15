@@ -52,12 +52,7 @@ public class MainActivity : AvaloniaMainActivity<App>
         var mainView = (MainView?)Content;
         var locSwitch = mainView?.FindControl<ToggleSwitch>("LocationServiceToggleSwitch");
         
-        if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) == Permission.Granted &&
-            locSwitch.IsChecked == true)
-        {
-            StartLocationService();
-        }
-        else
+        if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessFineLocation) != Permission.Granted)
         {
             ActivityCompat.RequestPermissions(this, new[] { Manifest.Permission.AccessFineLocation }, 0);
         }

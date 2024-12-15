@@ -6,6 +6,7 @@ using Avalonia.Controls.Notifications;
 using DynamicData;
 using GeoBaggins.AdminApp.Data;
 using GeoBaggins.AdminApp.Models;
+using Mapsui;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using Notification = Avalonia.Controls.Notifications.Notification;
@@ -23,6 +24,8 @@ public sealed class GeoViewModel : ViewModelBase
     private double? _longitude;
     private double? _radius;
     private string? _message;
+    
+    private Map _map;
     
     public ObservableCollection<AnchorZone> AnchorZones { get; } = new();
     
@@ -60,6 +63,12 @@ public sealed class GeoViewModel : ViewModelBase
     {
         get => _message;
         set => this.RaiseAndSetIfChanged(ref _message, value);
+    }
+
+    public Map MapLayer
+    {
+        get => _map;
+        set => this.RaiseAndSetIfChanged(ref _map, value);
     }
 
     public GeoViewModel(IServiceProvider serviceProvider)
@@ -115,19 +124,12 @@ public sealed class GeoViewModel : ViewModelBase
                 Message = Message!
             };
             
-            var exists = dbContext.GeoZones.FindAsync(zone.Latitude, zone.Longitude).Result != null;
-            if (!exists)
-            {
-                dbContext.GeoZones.Add(zone);
-                await dbContext.SaveChangesAsync();
-                _notificationManager.Show(new Notification("Creating", "Area created successfully.",
-                    NotificationType.Success));
-            }
-            else
-            {
-                _notificationManager.Show(new Notification("Creating", "Area already exists",
-                    NotificationType.Warning));
-            }
+            dbContext.GeoZones.Add(zone);
+            await dbContext.SaveChangesAsync();
+            _notificationManager.Show(new Notification("Creating", "Area created successfully.",
+                NotificationType.Success));
+            
+            UpdateZoneList();
         }, this.WhenAnyValue(property1: x => x.CurrentZone,
             property2: x => x.Address,
             property3: x => x.Latitude,

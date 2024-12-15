@@ -14,4 +14,7 @@ public record LocationDto
     
     [DataMember]
     public DateTime TimeStamp { get; init; }
+    
+    [DataMember]
+    public string DeviceId { get; init; } = string.Empty;
 }
