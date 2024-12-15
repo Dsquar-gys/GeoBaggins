@@ -5,7 +5,8 @@
              xmlns:vm="clr-namespace:GeoBaggins.AdminApp.ViewModels"
              xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="GeoBaggins.AdminApp.Views.GeoView">
+             x:Class="GeoBaggins.AdminApp.Views.GeoView"
+             x:DataType="vm:GeoViewModel">
     <Design.DataContext>
         <vm:GeoViewModel />
     </Design.DataContext>
@@ -26,43 +27,48 @@
                             Margin="0,0,12,0">
                     <u:Form LabelPosition="Left"
                             LabelWidth="*">
-                        <TextBox Width="300" u:FormItem.Label="Address" u:FormItem.IsRequired="True" />
-                        <TextBox Width="300" u:FormItem.Label="Latitude" u:FormItem.IsRequired="True" />
-                        <TextBox Width="300" u:FormItem.Label="Longitude" u:FormItem.IsRequired="True" />
-                        <TextBox Width="300" u:FormItem.Label="Radius" u:FormItem.IsRequired="True" />
-                        <TextBox Width="300" u:FormItem.Label="Message" Classes="TextArea" />
+                        <TextBox Width="300" u:FormItem.Label="Address" u:FormItem.IsRequired="True" Text="{Binding Address}"/>
+                        <TextBox Width="300" u:FormItem.Label="Latitude" u:FormItem.IsRequired="True" Text="{Binding Latitude}" />
+                        <TextBox Width="300" u:FormItem.Label="Longitude" u:FormItem.IsRequired="True" Text="{Binding Longitude}" />
+                        <TextBox Width="300" u:FormItem.Label="Radius" u:FormItem.IsRequired="True" Text="{Binding Radius}" />
+                        <TextBox Width="300" u:FormItem.Label="Message" Classes="TextArea" Text="{Binding Message}" />
                         <Grid u:FormItem.NoLabel="True"
                               ColumnDefinitions="*, *">
                             <Button Classes="Success"
                                     Grid.Column="0"
                                     HorizontalAlignment="Stretch"
                                     Margin="5, 0"
+                                    Command="{Binding SaveCommand}"
                                     Theme="{DynamicResource SolidButton}">Save</Button>
                             <Button Classes="Success"
                                     Grid.Column="1"
                                     HorizontalAlignment="Stretch"
                                     Margin="5, 0"
+                                    Command="{Binding CreateCommand}"
                                     Theme="{DynamicResource SolidButton}">Create</Button>
                         </Grid>
                         <Button Classes="Secondary"
                                 u:FormItem.NoLabel="True"
                                 Theme="{DynamicResource OutlineButton}"
                                 Content="Clear Selection"
+                                Command="{Binding ClearSelectionCommand}"
                                 HorizontalAlignment="Stretch"/>
                     </u:Form>
                     
                     <u:Divider Content="Areas"
                                Margin="0, 5"/>
-                    <ListBox>
-                        <ListBoxItem>111111</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
-                        <ListBoxItem>2222222222</ListBoxItem>
+                    <ListBox ItemsSource="{Binding AnchorZones}"
+                             SelectionMode="Single"
+                             SelectedItem="{Binding CurrentZone}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Id}" />
+                                    <Label Content="&#x09;-&#x09;"/>
+                                    <TextBlock Text="{Binding Address}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
             </ScrollViewer>
